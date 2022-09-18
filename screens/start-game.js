@@ -2,6 +2,7 @@ import React, { useState} from "react";
 import { View, Text, StyleSheet, Button, TouchableWithoutFeedback, Keyboard } from "react-native";
 import Card from "../components/card";
 import Input from "../components/input";
+import NumberContainer from "../components/number-container";
 import { colors } from "../constants/colors";
 
 const styles = StyleSheet.create({
@@ -12,13 +13,15 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        color: colors.secondary,
+        color: colors.primary,
         textAlign: 'center',
         paddingVertical: 20,
+        fontFamily: 'Lato-Regular',
     },
     label: {
-        fontSize: 14,
-        color: colors.backgroundDark,
+        fontSize: 20,
+        fontFamily: 'Lato-Regular',
+        color: colors.text,
         textAlign: 'center',
         paddingVertical: 5, 
     },
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '100%',
-        borderBottomColor: colors.secondary,
+        borderBottomColor: colors.primary,
         borderBottomWidth: 1,
         maxWidth: 70,
         fontSize: 25,
@@ -45,15 +48,63 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 20,
+    },
+    summaryContainer: {
+        width: '50%',
+        height: 180,
+        marginHorizontal: 20,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        marginTop: 40,
+    },
+    summaryText: {
+        fontFamily: 'Lato-Regular',
+        fontSize: 18,
     }
 });
 
-const StartGameScreen = () => {
+const StartGameScreen = ({onStartGame}) => {
     const [number, setNumber] = useState('');
-
+    const [confirmed, setConfirmed] = useState(false);
+    const [selectedNumber, setSelectedNumber] = useState(0);
     const onHandleChange = (text) => {
         setNumber(text.replace(/[^0-9]/g, ''));
     }
+
+    const onReset = () => {
+        setNumber('');
+        setSelectedNumber(0);
+        setConfirmed(false);
+        Keyboard.dismiss()
+    }
+
+    const onConfirm = () => {
+        const chosenNumber = parseInt(number, 10);
+        if(isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) return;
+        setConfirmed(true);
+        setSelectedNumber(chosenNumber)
+        setNumber('');
+    }
+
+    const onHandleStartGame = () => {
+        onStartGame(selectedNumber);
+    }
+
+    const comfirmedOutput = () =>  confirmed && (
+        <Card style={styles.summaryContainer}>
+            <Text style={styles.summaryText}>Tu seleccion</Text>
+            <NumberContainer>{selectedNumber}</NumberContainer>
+            <Button
+                title="Iniciar Juego"
+                onPress={onHandleStartGame}
+                color={colors.primary}
+            />
+        </Card>
+    )
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
@@ -73,16 +124,17 @@ const StartGameScreen = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         title="Limpiar"
-                        onPress={() => null}
+                        onPress={onReset}
                         color={colors.primary}
                     />
                     <Button
                         title="Confirmar"
-                        onPress={() => null}
+                        onPress={onConfirm}
                         color={colors.secondary}
                     />
                 </View>
             </Card>
+            {comfirmedOutput()}
         </View>
         </TouchableWithoutFeedback>
     )

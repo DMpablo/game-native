@@ -7,13 +7,13 @@ const styles = StyleSheet.create({
         height: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
         paddingTop: 20,
     },
     title: {
         fontSize: 20,
         color: colors.white,
-        fontWeight: 'bold',
+        fontFamily: 'Lato-Regular',
     }
 });
 
